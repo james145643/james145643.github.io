@@ -1,30 +1,229 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Basic Embed</title>
+<script>
+
+function setCookie(cname,cvalue,exdays) {
+// function setCookie(cname,cvalue,exdays) {
+  var d = new Date();
+//   exdays = 1000
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  var expires = "expires=" + d.toGMTString();
+  document.cookie = cname + "=" + cvalue + "; Secure" ;
+//   document.cookie = cname + "=" + cvalue + ";expires=" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function timeDiff(dateLog) {
+    var timeArray = dateLog.split('<br/>');
+    var t1 = new Date(timeArray[0]);
+    var t2 = new Date(timeArray[1]);
+    var timeDiff = t1 - t2;
+    if (isFinite(timeDiff)) {
+    // if (timeDiff.length > 2) {
+        // document.getElementById("p1").innerHTML = timeDiff + " seconds";
+        var text = new Date(timeDiff).toISOString().slice(11, -1).split(".")[0];
+        timeParts = text.split(":");      
+        document.getElementById("p1").innerHTML = "hh:mm:ss<br/>" + text;
+        // + '<br/>'
+        // + 'H:' + timeParts[0]
+        // + ' M:' + timeParts[1]
+        // + ' S:' + timeParts[2].split(".")[0];
+
+    } else {
+        document.getElementById("p1").innerHTML = "";
+    };
+}
+
+function checkCookie() {
+    var d = new Date();
+    d.setTime(d.getTime());
+    var thisUse = d.toUTCString().replace(" GMT", "");
+    // var thisUse = "lastUsed=" + d.toGMTString();
+    var dateLog = getCookie("dateLog");
+    setCookie("dateLog", thisUse + '<br/>' + dateLog, 0);
+    var dateLog = getCookie("dateLog");
+    document.getElementById("p2").innerHTML = dateLog;
+
+    timeDiff(dateLog);
+    }
+
+function removeCookie() {
+    setCookie('dateLog', ' ', -10);    
+    document.getElementById("p1").innerHTML = "";
+    document.getElementById("p2").innerHTML = "";
+    // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
+}
+
+function removePrevious() {
+    // setCookie('dateLog',"",-10);
+    var dateLog = getCookie("dateLog");
+    // split text into an array
+    var lines = dateLog.split('<br/>');
+    // remove one line, starting at the first position
+    lines.splice(0,1);
+    // join the array back into a single string
+    var revisedLog = lines.join('<br/>');
+    setCookie("dateLog", revisedLog, 0);  
+    document.getElementById("p2").innerHTML = revisedLog;
+    // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
+    timeDiff(revisedLog);
+}
+
+// function myFunction() {
+//   var x = document.getElementById("myFile");
+//   console.log(x.value);
+//   document.getElementById("p3").innerHTML = x.files[0].value;
+//   document.getElementById("img1").src = x.files;
+// }
+
+// https://www.xul.fr/en/html5/filereader.php
+// if (window.File && window.FileReader && window.FileList && window.Blob) 
+//   document.write("<b>File API supported.</b>");
+// else
+//   document.write('<i>File API not supported by this browser.</i>');
+
+//   function readerHandler(e2) 
+// { 
+//   var store = document.getElementById('storage');
+//   store.innerHTML=e2.target.result.split("\n").join("<br>"); 
+// }
+
+// function readfile(e1)
+// {
+//   var fileobj = e1.target.files[0]; 
+//   var fr = new FileReader();
+//   fr.onload = readerHandler;  
+//   fr.readAsText(fileobj); 
+// }
+
+// window.onload=function()
+// {
+//   var x = document.getElementById("filebrowsed");
+//   x.addEventListener('change', readfile, false);
+// }
+var ev2 = 1
+
+function imageHandler(e2) 
+{ 
+  var store = document.getElementById('imgstore');
+  store.innerHTML='<img src="' + e2.target.result +'">';
+
+  document.cookie = "imgFile=" + btoa(e2.target.result) + "; Secure" ;
+//     console.log(e2.target.result);
+//     console.log('                  ');
+
+//   var filename = getCookie('imgFile');
+  ev2 = e2.target.result
+//   console.log(e2.target.result);
+//   console.log(atob(getCookie("imgFile")));
+
+//   store.innerHTML='<img src="' + filename +'">';
+}
+
+// var ev1 = 1
+// var ev3 = 1
+
+function loadimage(e1)
+{
+  var filename = e1.target.files[0]; 
+  var fr = new FileReader();
+  fr.onload = imageHandler;  
+  fr.readAsDataURL(filename);
+// ev1 = e1
+// ev3 = filename
+  
+//   document.cookie = "imgFile=" + filename + "; Secure" ;
+}
+
+// window.onload=function()
+function setup() 
+{
+//   document.write('<i>Test</i>');
+//   var x = document.getElementById("filebrowsed");
+//   x.addEventListener('change', readfile, false);
+  var y = document.getElementById("getimage");
+  y.addEventListener('change', loadimage, false);
+
+  var imgFile = atob(getCookie("imgFile"));
+  console.log(imgFile);
+  var store = document.getElementById('imgstore');
+  store.innerHTML='<img src="' + imgFile +'">';
+}
+
+</script>
+
+<style>
+    img {
+      width: 60%;
+      height: auto;
+    }
+
+    button {
+        background-color: Transparent;
+        background-repeat:no-repeat;
+        /* border: none; */
+        cursor:pointer;
+        overflow: hidden;
+        outline:none;
+    }
+
+    p {
+        /* font-family: Helvetica; */
+        font-family: 'Calibri';
+        /* font-family: Optima; */
+        /* font-family: Lucida Bright; */
+    }
+    </style>
     
-    <script type="text/javascript" 
-	    src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
-    <script type="text/javascript">
-        function initViz() {
-            var containerDiv = document.getElementById("vizContainer"),
-                url = "https://public.tableau.com/views/DailyProfitKPI_12/Dashboard5?:embed=y&:display_count=yes",
-                options = {
-                    hideTabs: true,
-                    onFirstInteractive: function () {
-                        console.log("Run this code when the viz has finished loading.");
-                    }
-                };
-            
-            var viz = new tableau.Viz(containerDiv, url, options); 
-            // Create a viz object and embed it in the container div.
-        }
-    </script>
 </head>
 
-<body onload="initViz();">
-    <div id="vizContainer" style="width:800px; height:700px;"></div>    
-</body>
+<body onload="checkCookie(), setup()">
+    <img id="img1" src="z-image.png" width="20" height="20"> 
+    <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
+    <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
+    <p id="p1" style="font-size: x-large;">Hello</p>
+    <p id="p2">Hello</p>
+    <p id="p3">Hello</p>
+    <button type="button" background-color=Transparent onclick="removeCookie()">Reset DateLog</button>
+    <button type="button" background-color=Transparent onclick="removePrevious()">Remove Previous</button>
+    <!-- <button type="button" background-color=Transparent onclick="myFunction()">Load Image</button> -->
+ 
+    <!-- <input type="file" id="filebrowsed"> -->
+    <input type="file" id="getimage">
 
+    <fieldset><legend>Your image here</legend>
+        <div  id="imgstore"></div>
+    </fieldset> 
+
+
+    <!-- <input type="file" id="myFile" /> -->
+
+    <!-- <canvas id="canvas"></canvas> -->
+    
+    <!-- <script src="/build/qrcode.min.js"></script>
+    <script>
+        // https://www.npmjs.com/package/qrcode
+    QRCode.toCanvas(document.getElementById('canvas'), 'sample text', function (error) {
+        if (error) console.error(error)
+        console.log('success!');
+    })
+    </script> -->
+
+</body>
 </html>
