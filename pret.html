@@ -31,23 +31,21 @@ function getCookie(cname) {
 
 function timeDiff(dateLog) {
     var timeArray = dateLog.split('<br/>');
-    console.log(timeArray);
     var t1 = new Date(timeArray[0]);
     var t2 = new Date(timeArray[1]);
-    console.log(t2);
     var timeDiff = t1 - t2;
     if (isFinite(timeDiff)) {
     // if (timeDiff.length > 2) {
         // document.getElementById("p1").innerHTML = timeDiff + " seconds";
         var text = new Date(timeDiff).toISOString().slice(11, -1).split(".")[0];
         timeParts = text.split(":");      
-        document.getElementById("p1").innerHTML = text + '<br/>'
-        + 'H:' + timeParts[0]
-        + ' M:' + timeParts[1]
-        + ' S:' + timeParts[2].split(".")[0];
+        document.getElementById("p1").innerHTML = "hh:mm:ss<br/>" + text;
+        // + '<br/>'
+        // + 'H:' + timeParts[0]
+        // + ' M:' + timeParts[1]
+        // + ' S:' + timeParts[2].split(".")[0];
 
     } else {
-        // console.log(t1, t2, timeDiff);
         document.getElementById("p1").innerHTML = "";
     };
 }
@@ -84,6 +82,71 @@ function removePrevious() {
     setCookie("dateLog", revisedLog, 0);  
     document.getElementById("p2").innerHTML = revisedLog;
     // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
+    timeDiff(revisedLog);
+}
+
+// function myFunction() {
+//   var x = document.getElementById("myFile");
+//   console.log(x.value);
+//   document.getElementById("p3").innerHTML = x.files[0].value;
+//   document.getElementById("img1").src = x.files;
+// }
+
+// https://www.xul.fr/en/html5/filereader.php
+// if (window.File && window.FileReader && window.FileList && window.Blob) 
+//   document.write("<b>File API supported.</b>");
+// else
+//   document.write('<i>File API not supported by this browser.</i>');
+
+//   function readerHandler(e2) 
+// { 
+//   var store = document.getElementById('storage');
+//   store.innerHTML=e2.target.result.split("\n").join("<br>"); 
+// }
+
+// function readfile(e1)
+// {
+//   var fileobj = e1.target.files[0]; 
+//   var fr = new FileReader();
+//   fr.onload = readerHandler;  
+//   fr.readAsText(fileobj); 
+// }
+
+// window.onload=function()
+// {
+//   var x = document.getElementById("filebrowsed");
+//   x.addEventListener('change', readfile, false);
+// }
+var ev2 = 1
+
+function imageHandler(e2) 
+{ 
+  var store = document.getElementById('imgstore');
+  store.innerHTML='<img src="' + e2.target.result +'">';
+
+  document.cookie = "imgFile=" + btoa(e2.target.result) + "; Secure" ;
+}
+
+function loadimage(e1)
+{
+  var filename = e1.target.files[0]; 
+  var fr = new FileReader();
+  fr.onload = imageHandler;  
+  fr.readAsDataURL(filename);
+}
+
+// window.onload=function()
+function setup() 
+{
+//   document.write('<i>Test</i>');
+//   var x = document.getElementById("filebrowsed");
+//   x.addEventListener('change', readfile, false);
+  var y = document.getElementById("getimage");
+  y.addEventListener('change', loadimage, false);
+
+  var imgFile = atob(getCookie("imgFile"));
+  console.log(imgFile);
+  document.getElementById('imgstore').innerHTML='<img src="' + imgFile +'">';
 }
 
 </script>
@@ -113,13 +176,32 @@ function removePrevious() {
     
 </head>
 
-<body onload="checkCookie()">
-    <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20"> 
+<body onload="checkCookie(), setup()">
+    <!-- <img id="img1" src="z-image.png" width="20" height="20"> -->
+    <fieldset> <!-- <legend>Your image here</legend> --> <div  id="imgstore"></div> </fieldset> 
+    <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
     <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
-    <p id="p1">Hello</p>
+    <p id="p1" style="font-size: x-large;">Hello</p>
     <p id="p2">Hello</p>
     <button type="button" background-color=Transparent onclick="removeCookie()">Reset DateLog</button>
     <button type="button" background-color=Transparent onclick="removePrevious()">Remove Previous</button>
+    <!-- <button type="button" background-color=Transparent onclick="myFunction()">Load Image</button> -->
  
+    <!-- <input type="file" id="filebrowsed"> -->
+    <input type="file" id="getimage">
+
+        <!-- <input type="file" id="myFile" /> -->
+
+    <!-- <canvas id="canvas"></canvas> -->
+    
+    <!-- <script src="/build/qrcode.min.js"></script>
+    <script>
+        // https://www.npmjs.com/package/qrcode
+    QRCode.toCanvas(document.getElementById('canvas'), 'sample text', function (error) {
+        if (error) console.error(error)
+        console.log('success!');
+    })
+    </script> -->
+
 </body>
 </html>
