@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8"/>
 <script>
 
 function setCookie(cname,cvalue,exdays) {
@@ -9,7 +10,7 @@ function setCookie(cname,cvalue,exdays) {
 //   exdays = 1000
   d.setTime(d.getTime() + (exdays*24*60*60*1000));
   var expires = "expires=" + d.toGMTString();
-  document.cookie = cname + "=" + cvalue + "; Secure" ;
+  document.cookie = cname + "=" + encodeURIComponent(cvalue) + "; Secure" ;
 //   document.cookie = cname + "=" + cvalue + ";expires=" + expires + ";path=/";
 }
 
@@ -23,7 +24,7 @@ function getCookie(cname) {
       c = c.substring(1);
     }
     if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
+      return decodeURIComponent(c.substring(name.length, c.length));
     }
   }
   return "";
@@ -146,7 +147,8 @@ function setup()
 
   var imgFile = atob(getCookie("imgFile"));
   console.log(imgFile);
-  document.getElementById('imgstore').innerHTML='<img src="' + imgFile +'">';
+  // document.getElementById('imgstore').innerHTML='<img src="' + imgFile +'">';
+  document.getElementById('img1').src = imgFile;
 }
 
 </script>
@@ -178,13 +180,14 @@ function setup()
 
 <body onload="checkCookie(), setup()">
     <!-- <img id="img1" src="z-image.png" width="20" height="20"> -->
-    <fieldset> <!-- <legend>Your image here</legend> --> <div  id="imgstore"></div> </fieldset> 
+    <img id="img1" width="20" height="20">
+    <!-- <fieldset> <legend>Your image here</legend> <div  id="imgstore"></div> </fieldset>  -->
     <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
     <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
     <p id="p1" style="font-size: x-large;">Hello</p>
     <p id="p2">Hello</p>
-    <p id="p3">Hello long, text with numbers 12345578:937322\nTue, 10 Nov 2020 13:03:30\nTue, 10 Nov 2020 13:03:29</p>
-    <p id="p4">Hello long, text with numbers 12345578:937322<br/>Tue, 10 Nov 2020 13:03:30<br/>Tue, 10 Nov 2020 13:03:29</p>
+    <!-- <p id="p3">Hello long, text with numbers 12345578:937322\nTue, 10 Nov 2020 13:03:30\nTue, 10 Nov 2020 13:03:29</p>
+    <p id="p4">Hello long, text with numbers 12345578:937322<br/>Tue, 10 Nov 2020 13:03:30<br/>Tue, 10 Nov 2020 13:03:29</p> -->
 
     <button type="button" background-color=Transparent onclick="removeCookie()">Reset DateLog</button>
     <button type="button" background-color=Transparent onclick="removePrevious()">Remove Previous</button>
