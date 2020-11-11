@@ -44,9 +44,11 @@ function runTimer() {
       displayText = hours + "h " + minutes + "m " + seconds + "s ";
       } else if (distance >= 1000 * 60) {
       displayText = minutes + "m " + seconds + "s ";
+      } else if (distance >= 1000) {
+        displayText = seconds + "s ";
       } else {
-      displayText = seconds + "s ";
-      }   
+        displayText = "";
+      }  
       
     document.getElementById("demo").innerHTML = displayText;
   })
@@ -110,10 +112,11 @@ function setupPage() {
   runTimer();
 }
 
-function removeCookie() {
-    setCookie('dateLog', ' ', -10);    
-    document.getElementById("p1").innerHTML = "";
+function resetDateLog() {
+    setCookie("dateLog", " ", -10);
+    // document.getElementById("p1").innerHTML = "1 ";
     document.getElementById("p2").innerHTML = "";
+    document.getElementById("demo").innerHTML = "";
     // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
 }
 
@@ -158,7 +161,7 @@ function addTimeRecord() {
 <style>
   
     img {
-      width: 80%;
+      width: 100%;
       height: auto;
     }
 
@@ -197,7 +200,7 @@ function addTimeRecord() {
     <!-- <p id="p1" style="font-size: x-large;">Hello</p> -->
     <p id="p2">Hello</p>
 
-    <button type="button" style="background-color: transparent;" onclick="removeCookie()">Reset DateLog</button>
+    <button type="button" style="background-color: transparent;" onclick="resetDateLog()">Reset DateLog</button>
     <button type="button" style="background-color: transparent;" onclick="removePrevious()">Remove Previous</button>
     
     <!-- <input type="file" id="getimage"> -->
