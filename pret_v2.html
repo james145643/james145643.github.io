@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<script>
+
+// screen.orientation.lock("portrait");
+
+// screen.orientation.addEventListener('change', function() {
+// 	alert('Current orientation is ' + screen.orientation.type);
+// });
+
+function runTimer() {
+  // Set the date we're counting down to
+  
+  var dateLog = getCookie("dateLog");
+  var timeArray = dateLog.split('<br/>');
+  var latest = new Date(timeArray[0]);
+
+  var countDownDate = latest.getTime();
+  // var countDownDate = new Date("Nov 11, 2020 15:37:25").getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+    // Get today's date and time
+    var now = new Date().getTime();
+      
+    // Find the distance between now and the count down date
+    var distance = now - countDownDate;
+    // var distance = countDownDate - now;
+      
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+    // Output the result in an element with id="demo"
+    var displayText = "";
+    
+    if (distance >= 1000 * 60 * 60 * 24) {
+      displayText = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+      } else if (distance >= 1000 * 60 * 60) {
+      displayText = hours + "h " + minutes + "m " + seconds + "s ";
+      } else if (distance >= 1000 * 60) {
+      displayText = minutes + "m " + seconds + "s ";
+      } else {
+      displayText = seconds + "s ";
+      }   
+      
+    document.getElementById("demo").innerHTML = displayText;
+  })
+}
+
+  function setCookie(cname,cvalue,exdays) {
+  // function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+  //   exdays = 1000
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + encodeURIComponent(cvalue) + "; Secure" ;
+  //   document.cookie = cname + "=" + cvalue + ";expires=" + expires + ";path=/";
+  }
+
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return decodeURIComponent(c.substring(name.length, c.length));
+      }
+    }
+    return "";
+  }
+
+  function loadTimeDiff() {
+    var dateLog = getCookie("dateLog");
+    var timeArray = dateLog.split('<br/>');
+    var latest = new Date(timeArray[0]);
+    var previous = new Date(timeArray[1]);
+    var difference = latest - previous;
+    if (isFinite(difference)) {
+        var timeAsText = new Date(difference).toISOString().slice(11, -1).split(".")[0];
+        document.getElementById("p1").innerHTML = "hh:mm:ss " + timeAsText;
+        // document.getElementById("p1").innerHTML = "hh:mm:ss<br/>" + timeAsText;
+    } else {
+        document.getElementById("p1").innerHTML = "";
+    }
+  }
+
+  function checkCookie() {
+  // check for image
+  var imgUrl = getCookie("imgUrl");
+  console.log(imgUrl);
+  document.getElementById('img1').src = imgUrl;
+
+  // check for dateLog
+  var dateLog = getCookie("dateLog");
+  document.getElementById("p2").innerHTML = dateLog;
+}
+
+function setupPage() {
+  checkCookie();
+  // loadTimeDiff();
+  runTimer();
+}
+
+function removeCookie() {
+    setCookie('dateLog', ' ', -10);    
+    document.getElementById("p1").innerHTML = "";
+    document.getElementById("p2").innerHTML = "";
+    // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
+}
+
+function removePrevious() {
+    // setCookie('dateLog',"",-10);
+    var dateLog = getCookie("dateLog");
+    // split text into an array
+    var lines = dateLog.split('<br/>');
+    // remove one line, starting at the first position
+    lines.splice(0,1);
+    // join the array back into a single string
+    var revisedLog = lines.join('<br/>');
+    setCookie("dateLog", revisedLog, 0);  
+    document.getElementById("p2").innerHTML = revisedLog;
+    // loadTimeDiff();
+    runTimer();
+}
+
+function loadNewImage(v) {
+  document.getElementById("p2").innerHTML = v;
+  var codeUrl = "https://digitalbarcode.net/QR/" + v + ".png";
+  document.getElementById('img1').src = codeUrl;
+  // document.cookie = "imgUrl=" + codeUrl + "; Secure" ;
+  setCookie("imgUrl", codeUrl)
+}
+
+function addTimeRecord() {
+  var d = new Date();
+  d.setTime(d.getTime());
+  var thisUse = d.toUTCString().replace(" GMT", "");
+  var dateLog = getCookie("dateLog");
+  var dateLog = thisUse + '<br/>' + dateLog;
+  setCookie("dateLog", dateLog, 0);
+  document.getElementById("p2").innerHTML = dateLog;
+  // loadTimeDiff();
+  runTimer();
+}
+
+
+</script>
+
+<style>
+  
+    img {
+      width: 20%;
+      height: auto;
+    }
+
+    button {
+        background-color: Transparent;
+        background-repeat:no-repeat;
+        /* border: none; */
+        cursor:pointer;
+        overflow: hidden;
+        outline:none;
+    }
+
+    body {
+        /* font-family: Helvetica; */
+        font-family: 'Calibri';
+        /* font-family: Optima; */
+        /* font-family: Lucida Bright; */
+    }
+
+    .timer {
+      text-align: center;
+      font-size: 60px;
+      margin-top: 0px;
+      }
+    </style>
+    
+</head>
+
+<body onload="setupPage(), runTimer()" ondblclick="addTimeRecord()">
+  
+    <img id="img1" width="1000" height="1000">
+    <p id="demo" class="timer"></p>
+    <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
+    <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
+    
+    <!-- <p id="p1" style="font-size: x-large;">Hello</p> -->
+    <p id="p2">Hello</p>
+
+    <button type="button" style="background-color: transparent;" onclick="removeCookie()">Reset DateLog</button>
+    <button type="button" style="background-color: transparent;" onclick="removePrevious()">Remove Previous</button>
+    
+    <!-- <input type="file" id="getimage"> -->
+    
+    <label for="code">QR Code: </label>
+    <input type="text" id="code" name="username">
+    <input type="submit" value="Submit" onclick="loadNewImage()" style="background-color: transparent;">
+   
+
+</body>
+</html>

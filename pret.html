@@ -4,67 +4,111 @@
 <meta charset="utf-8"/>
 <script>
 
-screen.orientation.lock("portrait")
+// screen.orientation.lock("portrait");
 
-function setCookie(cname,cvalue,exdays) {
-// function setCookie(cname,cvalue,exdays) {
-  var d = new Date();
-//   exdays = 1000
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  var expires = "expires=" + d.toGMTString();
-  document.cookie = cname + "=" + encodeURIComponent(cvalue) + "; Secure" ;
-//   document.cookie = cname + "=" + cvalue + ";expires=" + expires + ";path=/";
+// screen.orientation.addEventListener('change', function() {
+// 	alert('Current orientation is ' + screen.orientation.type);
+// });
+
+function runTimer() {
+  // Set the date we're counting down to
+  
+  var dateLog = getCookie("dateLog");
+  var timeArray = dateLog.split('<br/>');
+  var latest = new Date(timeArray[0]);
+
+  var countDownDate = latest.getTime();
+  // var countDownDate = new Date("Nov 11, 2020 15:37:25").getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+    // Get today's date and time
+    var now = new Date().getTime();
+      
+    // Find the distance between now and the count down date
+    var distance = now - countDownDate;
+    // var distance = countDownDate - now;
+      
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+    // Output the result in an element with id="demo"
+    var displayText = "";
+    
+    if (distance >= 1000 * 60 * 60 * 24) {
+      displayText = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+      } else if (distance >= 1000 * 60 * 60) {
+      displayText = hours + "h " + minutes + "m " + seconds + "s ";
+      } else if (distance >= 1000 * 60) {
+      displayText = minutes + "m " + seconds + "s ";
+      } else {
+      displayText = seconds + "s ";
+      }   
+      
+    document.getElementById("demo").innerHTML = displayText;
+  })
 }
 
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return decodeURIComponent(c.substring(name.length, c.length));
-    }
+  function setCookie(cname,cvalue,exdays) {
+  // function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+  //   exdays = 1000
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + encodeURIComponent(cvalue) + "; Secure" ;
+  //   document.cookie = cname + "=" + cvalue + ";expires=" + expires + ";path=/";
   }
-  return "";
-}
 
-function timeDiff(dateLog) {
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return decodeURIComponent(c.substring(name.length, c.length));
+      }
+    }
+    return "";
+  }
+
+  function loadTimeDiff() {
+    var dateLog = getCookie("dateLog");
     var timeArray = dateLog.split('<br/>');
-    var t1 = new Date(timeArray[0]);
-    var t2 = new Date(timeArray[1]);
-    var timeDiff = t1 - t2;
-    if (isFinite(timeDiff)) {
-    // if (timeDiff.length > 2) {
-        // document.getElementById("p1").innerHTML = timeDiff + " seconds";
-        var text = new Date(timeDiff).toISOString().slice(11, -1).split(".")[0];
-        timeParts = text.split(":");      
-        document.getElementById("p1").innerHTML = "hh:mm:ss<br/>" + text;
-        // + '<br/>'
-        // + 'H:' + timeParts[0]
-        // + ' M:' + timeParts[1]
-        // + ' S:' + timeParts[2].split(".")[0];
-
+    var latest = new Date(timeArray[0]);
+    var previous = new Date(timeArray[1]);
+    var difference = latest - previous;
+    if (isFinite(difference)) {
+        var timeAsText = new Date(difference).toISOString().slice(11, -1).split(".")[0];
+        document.getElementById("p1").innerHTML = "hh:mm:ss " + timeAsText;
+        // document.getElementById("p1").innerHTML = "hh:mm:ss<br/>" + timeAsText;
     } else {
         document.getElementById("p1").innerHTML = "";
-    };
+    }
+  }
+
+  function checkCookie() {
+  // check for image
+  var imgUrl = getCookie("imgUrl");
+  console.log(imgUrl);
+  document.getElementById('img1').src = imgUrl;
+
+  // check for dateLog
+  var dateLog = getCookie("dateLog");
+  document.getElementById("p2").innerHTML = dateLog;
 }
 
-function checkCookie() {
-    var d = new Date();
-    d.setTime(d.getTime());
-    var thisUse = d.toUTCString().replace(" GMT", "");
-    // var thisUse = "lastUsed=" + d.toGMTString();
-    var dateLog = getCookie("dateLog");
-    setCookie("dateLog", thisUse + '<br/>' + dateLog, 0);
-    var dateLog = getCookie("dateLog");
-    document.getElementById("p2").innerHTML = dateLog;
-
-    timeDiff(dateLog);
-    }
+function setupPage() {
+  checkCookie();
+  // loadTimeDiff();
+  runTimer();
+}
 
 function removeCookie() {
     setCookie('dateLog', ' ', -10);    
@@ -84,81 +128,37 @@ function removePrevious() {
     var revisedLog = lines.join('<br/>');
     setCookie("dateLog", revisedLog, 0);  
     document.getElementById("p2").innerHTML = revisedLog;
-    // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
-    timeDiff(revisedLog);
+    // loadTimeDiff();
+    runTimer();
 }
 
-// function myFunction() {
-//   var x = document.getElementById("myFile");
-//   console.log(x.value);
-//   document.getElementById("p3").innerHTML = x.files[0].value;
-//   document.getElementById("img1").src = x.files;
-// }
-
-// https://www.xul.fr/en/html5/filereader.php
-// if (window.File && window.FileReader && window.FileList && window.Blob) 
-//   document.write("<b>File API supported.</b>");
-// else
-//   document.write('<i>File API not supported by this browser.</i>');
-
-//   function readerHandler(e2) 
-// { 
-//   var store = document.getElementById('storage');
-//   store.innerHTML=e2.target.result.split("\n").join("<br>"); 
-// }
-
-// function readfile(e1)
-// {
-//   var fileobj = e1.target.files[0]; 
-//   var fr = new FileReader();
-//   fr.onload = readerHandler;  
-//   fr.readAsText(fileobj); 
-// }
-
-// window.onload=function()
-// {
-//   var x = document.getElementById("filebrowsed");
-//   x.addEventListener('change', readfile, false);
-// }
-var ev2 = 1
-
-function imageHandler(e2) 
-{ 
-  var store = document.getElementById('imgstore');
-  store.innerHTML='<img src="' + e2.target.result +'">';
-
-  document.cookie = "imgFile=" + btoa(e2.target.result) + "; Secure" ;
+function loadNewImage(v) {
+  document.getElementById("p2").innerHTML = v;
+  var codeUrl = "https://digitalbarcode.net/QR/" + v + ".png";
+  document.getElementById('img1').src = codeUrl;
+  // document.cookie = "imgUrl=" + codeUrl + "; Secure" ;
+  setCookie("imgUrl", codeUrl)
 }
 
-function loadimage(e1)
-{
-  var filename = e1.target.files[0]; 
-  var fr = new FileReader();
-  fr.onload = imageHandler;  
-  fr.readAsDataURL(filename);
+function addTimeRecord() {
+  var d = new Date();
+  d.setTime(d.getTime());
+  var thisUse = d.toUTCString().replace(" GMT", "");
+  var dateLog = getCookie("dateLog");
+  var dateLog = thisUse + '<br/>' + dateLog;
+  setCookie("dateLog", dateLog, 0);
+  document.getElementById("p2").innerHTML = dateLog;
+  // loadTimeDiff();
+  runTimer();
 }
 
-// window.onload=function()
-function setup() 
-{
-//   document.write('<i>Test</i>');
-//   var x = document.getElementById("filebrowsed");
-//   x.addEventListener('change', readfile, false);
-  var y = document.getElementById("getimage");
-  y.addEventListener('change', loadimage, false);
-
-  var imgFile = atob(getCookie("imgFile"));
-  console.log(imgFile);
-  // document.getElementById('imgstore').innerHTML='<img src="' + imgFile +'">';
-  document.getElementById('img1').src = "https://digitalbarcode.net/QR/CSUONFKW5MAR.png";
-  // document.getElementById('img1').src = imgFile;
-}
 
 </script>
 
 <style>
+  
     img {
-      width: 80%;
+      width: 20%;
       height: auto;
     }
 
@@ -171,46 +171,41 @@ function setup()
         outline:none;
     }
 
-    p {
+    body {
         /* font-family: Helvetica; */
         font-family: 'Calibri';
         /* font-family: Optima; */
         /* font-family: Lucida Bright; */
     }
+
+    .timer {
+      text-align: center;
+      font-size: 60px;
+      margin-top: 0px;
+      }
     </style>
     
 </head>
 
-<body onload="checkCookie(), setup()">
-    <!-- <img id="img1" src="z-image.png" width="20" height="20"> -->
-    <img id="img1" width="600" height="600">
-    <!-- <fieldset> <legend>Your image here</legend> <div  id="imgstore"></div> </fieldset>  -->
+<body onload="setupPage(), runTimer()" ondblclick="addTimeRecord()">
+  
+    <img id="img1" width="1000" height="1000">
+    <p id="demo" class="timer"></p>
     <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
     <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
-    <p id="p1" style="font-size: x-large;">Hello</p>
-    <p id="p2">Hello</p>
-    <!-- <p id="p3">Hello long, text with numbers 12345578:937322\nTue, 10 Nov 2020 13:03:30\nTue, 10 Nov 2020 13:03:29</p>
-    <p id="p4">Hello long, text with numbers 12345578:937322<br/>Tue, 10 Nov 2020 13:03:30<br/>Tue, 10 Nov 2020 13:03:29</p> -->
-
-    <button type="button" background-color=Transparent onclick="removeCookie()">Reset DateLog</button>
-    <button type="button" background-color=Transparent onclick="removePrevious()">Remove Previous</button>
-    <!-- <button type="button" background-color=Transparent onclick="myFunction()">Load Image</button> -->
- 
-    <!-- <input type="file" id="filebrowsed"> -->
-    <input type="file" id="getimage">
-
-        <!-- <input type="file" id="myFile" /> -->
-
-    <!-- <canvas id="canvas"></canvas> -->
     
-    <!-- <script src="/build/qrcode.min.js"></script>
-    <script>
-        // https://www.npmjs.com/package/qrcode
-    QRCode.toCanvas(document.getElementById('canvas'), 'sample text', function (error) {
-        if (error) console.error(error)
-        console.log('success!');
-    })
-    </script> -->
+    <!-- <p id="p1" style="font-size: x-large;">Hello</p> -->
+    <p id="p2">Hello</p>
+
+    <button type="button" style="background-color: transparent;" onclick="removeCookie()">Reset DateLog</button>
+    <button type="button" style="background-color: transparent;" onclick="removePrevious()">Remove Previous</button>
+    
+    <!-- <input type="file" id="getimage"> -->
+    
+    <label for="code">QR Code: </label>
+    <input type="text" id="code" name="username">
+    <input type="submit" value="Submit" onclick="loadNewImage()" style="background-color: transparent;">
+   
 
 </body>
 </html>
