@@ -205,28 +205,32 @@ function addTimeRecord() {
       text-align: center;
       font-size: 100px;
       margin-top: 0px;
+      /* float: right; */
       }
 
+    .col2 {
+      margin-left: 80px;
+      /* text-align: center; */
+    }
+
+
 @media screen and (orientation: portrait) {
-  .timer {
-    font-size: 60px;
-  }
 
 img {
   width: 100%;
   height: auto;
   }
-
 }
 
 @media screen and (orientation: landscape) {
 
-  /* .timer {
-    font-size: 100px;
-  } */
+  .col2 {
+      float: right;
+      margin-top: 40px;
+    }
 
   img {    
-    width: 55%;
+    width: 50%;
     height: auto;
     /* position: fixed;
     max-width: 100%;
@@ -239,24 +243,26 @@ img {
 </head>
 
 <body onload="setupPage()" ondblclick="addTimeRecord()">
-  
+    <div>
     <img id="img1" width="200%" height="200%">
+    <div class="col2">
     <p id="demo" class="timer"></p>
     <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
     <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
     
     <!-- <p id="p1" style="font-size: x-large;">Hello</p> -->
-    <p id="p2"></p>
+    <p id="p2" class="dateLog"></p>
 
     <button type="button" style="background-color: transparent;" onclick="resetDateLog()">Reset DateLog</button>
     <button type="button" style="background-color: transparent;" onclick="removePrevious()">Remove Previous</button>
     
     <!-- <input type="file" id="getimage"> -->
-    
+    <p></p>
     <label for="code">QR Code: </label>
-    <input type="text" id="code" name="username">
-    <input type="submit" value="Submit" onclick="loadNewImage()" style="background-color: transparent;">
-   
+    <input type="text" id="code" name="username" onchange="loadNewImage()">
+    <!-- <input type="submit" value="Submit" onclick="loadNewImage()" style="background-color: transparent;"> -->
+  </div>
+</div>
 
 </body>
 </html>
