@@ -10,23 +10,32 @@
 // 	alert('Current orientation is ' + screen.orientation.type);
 // });
 
-function runTimer() {
-  // Set the date we're counting down to
-  
-  var dateLog = getCookie("dateLog");
-  var timeArray = dateLog.split('<br/>');
-  var latest = new Date(timeArray[0]);
+var latestTime = NaN
 
-  var countDownDate = latest.getTime();
+function setTime(dateLog) {
+  
+  // Set the date we're counting down from;
+  var dateLogArray = dateLog.split('<br/>');
+  latestTime = new Date(dateLogArray[0]).getTime();
+}
+
+function runTimer() {
+  // Set the date we're counting down from
+  
+  // var dateLog = getCookie("dateLog");
+  // var dateLogArray = dateLog.split('<br/>');
+  // var latest = new Date(dateLogArray[0]);
+
+  // var countDownDate = latest.getTime();
   // var countDownDate = new Date("Nov 11, 2020 15:37:25").getTime();
 
   // Update the count down every 1 second
   var x = setInterval(function() {
     // Get today's date and time
     var now = new Date().getTime();
-      
+    
     // Find the distance between now and the count down date
-    var distance = now - countDownDate;
+    var distance = now - latestTime;
     // var distance = countDownDate - now;
       
     // Time calculations for days, hours, minutes and seconds
@@ -47,7 +56,7 @@ function runTimer() {
       } else if (distance >= 1000) {
         displayText = seconds + "s ";
       } else {
-        displayText = "";
+        displayText = " ";
       }  
       
     document.getElementById("demo").innerHTML = displayText;
@@ -82,9 +91,9 @@ function runTimer() {
 
   function loadTimeDiff() {
     var dateLog = getCookie("dateLog");
-    var timeArray = dateLog.split('<br/>');
-    var latest = new Date(timeArray[0]);
-    var previous = new Date(timeArray[1]);
+    var dateLogArray = dateLog.split('<br/>');
+    var latest = new Date(dateLogArray[0]);
+    var previous = new Date(dateLogArray[1]);
     var difference = latest - previous;
     if (isFinite(difference)) {
         var timeAsText = new Date(difference).toISOString().slice(11, -1).split(".")[0];
@@ -104,6 +113,8 @@ function runTimer() {
   // check for dateLog
   var dateLog = getCookie("dateLog");
   document.getElementById("p2").innerHTML = dateLog;
+
+  setTime(dateLog);
 }
 
 function setupPage() {
@@ -124,15 +135,17 @@ function removePrevious() {
     // setCookie('dateLog',"",-10);
     var dateLog = getCookie("dateLog");
     // split text into an array
-    var lines = dateLog.split('<br/>');
+    var dateLogArray = dateLog.split('<br/>');
     // remove one line, starting at the first position
-    lines.splice(0,1);
+    dateLogArray.splice(0,1);
     // join the array back into a single string
-    var revisedLog = lines.join('<br/>');
-    setCookie("dateLog", revisedLog, 0);  
-    document.getElementById("p2").innerHTML = revisedLog;
+    var dateLog = dateLogArray.join('<br/>');
+    setCookie("dateLog", dateLog, 0);  
+    document.getElementById("p2").innerHTML = dateLog;
     // loadTimeDiff();
-    runTimer();
+    // runTimer();
+    setTime(dateLog);
+    
 }
 
 function loadNewImage(v) {
@@ -152,17 +165,24 @@ function addTimeRecord() {
   setCookie("dateLog", dateLog, 0);
   document.getElementById("p2").innerHTML = dateLog;
   // loadTimeDiff();
-  runTimer();
+  // runTimer();
+  setTime(dateLog);
 }
 
 
 </script>
 
 <style>
-  
+
+  /* For portrait, we want the tool bar on top */
+
+ 
     img {
       width: 100%;
-      height: auto;
+      height: auto;   
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     button {
@@ -186,19 +206,47 @@ function addTimeRecord() {
       font-size: 60px;
       margin-top: 0px;
       }
+
+@media screen and (orientation: portrait) {
+  .timer {
+    font-size: 60px;
+  }
+
+img {
+  width: 100%;
+  height: auto;
+  }
+
+}
+
+@media screen and (orientation: landscape) {
+
+  .timer {
+    font-size: 100px;
+  }
+
+  img {    
+    width: auto;
+    height: 100%;
+    /* position: fixed; */
+    /* max-width: 100%; */
+    /* max-height: 5%; */
+  }
+
+}
     </style>
     
 </head>
 
-<body onload="setupPage(), runTimer()" ondblclick="addTimeRecord()">
+<body onload="setupPage()" ondblclick="addTimeRecord()">
   
-    <img id="img1" width="1000" height="1000">
+    <img id="img1" width="200%" height="200%">
     <p id="demo" class="timer"></p>
     <!-- <img src="https://digitalbarcode.net/QR/CSUONFKW5MAR.png" width="20" height="20">  -->
     <!-- <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/og.4ad05d4125a5.png" width="20" height="20">  -->
     
     <!-- <p id="p1" style="font-size: x-large;">Hello</p> -->
-    <p id="p2">Hello</p>
+    <p id="p2"></p>
 
     <button type="button" style="background-color: transparent;" onclick="resetDateLog()">Reset DateLog</button>
     <button type="button" style="background-color: transparent;" onclick="removePrevious()">Remove Previous</button>
