@@ -53,7 +53,7 @@ function runTimer() {
       displayText = hours + "h " + minutes + "m " + seconds + "s ";
       } else if (distance >= 1000 * 60) {
       displayText = minutes + "m " + seconds + "s ";
-      } else if (distance >= 1000) {
+      } else if (distance > 0) {
         displayText = seconds + "s ";
       } else {
         displayText = " ";
@@ -128,6 +128,9 @@ function resetDateLog() {
     // document.getElementById("p1").innerHTML = "1 ";
     document.getElementById("p2").innerHTML = "";
     document.getElementById("demo").innerHTML = "";
+    
+    var dateLog = getCookie("dateLog");
+    setTime(dateLog);
     // document.cookie = "dateLog=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/"
 }
 
@@ -259,8 +262,8 @@ img {
     <!-- <input type="file" id="getimage"> -->
     <p></p>
     <label for="code">QR Code: </label>
-    <input type="text" id="code" name="username" onchange="loadNewImage()">
-    <!-- <input type="submit" value="Submit" onclick="loadNewImage()" style="background-color: transparent;"> -->
+    <input type="text" id="code" name="username">
+    <input type="submit" value="Submit" onclick="loadNewImage()" style="background-color: transparent;">
   </div>
 </div>
 
